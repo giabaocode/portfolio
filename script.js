@@ -438,8 +438,10 @@ copyBtn?.addEventListener("click", async () => {
    1. Vào https://readyplayer.me → tạo avatar từ 1 tấm selfie (miễn phí)
    2. Lấy link .glb, dạng: https://models.readyplayer.me/<id>.glb
    3. Dán vào AVATAR_URL bên dưới, rồi git commit + push.
-   (Hiện đang để model robot mẫu làm placeholder để bạn xem cơ chế.)            */
-const AVATAR_URL = "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb";
+   Hiện đang dùng model "build bot" self-host trong ./assets/avatar.glb
+   (không phụ thuộc DNS/CDN ngoài → ai xem cũng thấy). Thay file đó HOẶC đổi
+   AVATAR_URL sang link .glb của bạn là xong.                                  */
+const AVATAR_URL = "./assets/avatar.glb";
 
 const stage3d = document.getElementById("hero-3d");
 const avatar = document.getElementById("avatar");
