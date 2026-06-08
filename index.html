@@ -16,6 +16,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <!-- 3D avatar: model-viewer web component (lazy, loads from Google CDN) -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -63,6 +65,8 @@
 
       <!-- ====== HERO ====== -->
       <section class="hero" id="top">
+       <div class="hero-grid">
+        <div class="hero-copy">
         <p class="hero-tag">Backend Java · Business Analyst · Intern</p>
         <h1>
           I turn messy business processes<br />
@@ -92,6 +96,29 @@
           <span class="dot"></span>
           <a href="tel:+84907506049">0907 506 049</a>
         </div>
+        </div><!-- /hero-copy -->
+
+        <div class="hero-3d" id="hero-3d" aria-label="Interactive 3D avatar of Gia Bao">
+          <div class="avatar-skeleton" aria-hidden="true"><span></span></div>
+          <model-viewer
+            id="avatar"
+            alt="3D avatar of Pham Ngoc Gia Bao"
+            camera-controls
+            disable-zoom
+            touch-action="pan-y"
+            auto-rotate
+            auto-rotate-delay="600"
+            rotation-per-second="16deg"
+            interaction-prompt="none"
+            shadow-intensity="0.9"
+            exposure="1.05"
+            environment-image="neutral"
+            loading="lazy"
+            reveal="auto"></model-viewer>
+          <span class="avatar-hint">drag to rotate</span>
+          <p class="avatar-failmsg" aria-hidden="true">3D preview unavailable on this device</p>
+        </div>
+       </div><!-- /hero-grid -->
       </section>
 
       <!-- ====== RUNTIME METRICS ====== -->

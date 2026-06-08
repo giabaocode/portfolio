@@ -431,6 +431,47 @@ copyBtn?.addEventListener("click", async () => {
   setTimeout(() => { copyBtn.textContent = "Copy email address"; }, 2000);
 });
 
+/* ===========================================
+   3D AVATAR
+   ===========================================
+   ⬇⬇⬇  THAY URL NÀY bằng avatar Ready Player Me CỦA BẠN  ⬇⬇⬇
+   1. Vào https://readyplayer.me → tạo avatar từ 1 tấm selfie (miễn phí)
+   2. Lấy link .glb, dạng: https://models.readyplayer.me/<id>.glb
+   3. Dán vào AVATAR_URL bên dưới, rồi git commit + push.
+   (Hiện đang để model robot mẫu làm placeholder để bạn xem cơ chế.)            */
+const AVATAR_URL = "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb";
+
+const stage3d = document.getElementById("hero-3d");
+const avatar = document.getElementById("avatar");
+if (avatar && stage3d) {
+  const reduce3d = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce3d) avatar.removeAttribute("auto-rotate");
+
+  avatar.addEventListener("load", () => {
+    stage3d.classList.add("loaded");
+    // If the model ships animation clips (e.g. an idle), play one on loop.
+    // Plain Ready Player Me avatars usually have none — the slow auto-rotate carries it.
+    try {
+      const clips = avatar.availableAnimations || [];
+      if (clips.length) {
+        avatar.animationName = clips.find((c) => /idle|breath|stand|wave/i.test(c)) || clips[0];
+        if (!reduce3d) avatar.play({ repetitions: Infinity });
+      }
+    } catch (_) { /* no-op */ }
+  });
+
+  avatar.addEventListener("error", () => stage3d.classList.add("failed"));
+
+  // Bail out gracefully if the browser has no WebGL at all.
+  const probe = document.createElement("canvas");
+  const hasWebGL = !!(probe.getContext("webgl") || probe.getContext("experimental-webgl"));
+  if (!hasWebGL) {
+    stage3d.classList.add("failed");
+  } else {
+    avatar.setAttribute("src", AVATAR_URL);
+  }
+}
+
 /* ---------- Scroll to top ---------- */
 const toTop = document.getElementById("to-top");
 window.addEventListener("scroll", () => {
