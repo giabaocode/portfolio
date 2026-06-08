@@ -1,0 +1,11 @@
+# local backup of the previous portfolio — not for the public repo
+_old_backup/
+
+# stale render screenshots of the OLD design
+render-desktop.png
+render-mobile.png
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/

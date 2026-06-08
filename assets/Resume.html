@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pham Ngoc Gia Bao - Resume</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        font-size: 10pt;
+        line-height: 1.45;
+        color: #1a1a1a;
+        padding: 40px 50px;
+        max-width: 210mm;
+        margin: 0 auto;
+        background: #fff;
+      }
+      a {
+        color: #1a56db;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 16px;
+        border-bottom: 2px solid #1a56db;
+        padding-bottom: 12px;
+      }
+      .header h1 {
+        font-size: 22pt;
+        font-weight: 700;
+        color: #111;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+      .header .subtitle {
+        font-size: 11pt;
+        color: #444;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      .header .contact {
+        font-size: 9pt;
+        color: #555;
+      }
+      .header .contact span {
+        margin: 0 6px;
+      }
+      .header .contact .sep {
+        color: #ccc;
+      }
+
+      /* Sections */
+      .section {
+        margin-bottom: 14px;
+      }
+      .section-title {
+        font-size: 10.5pt;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #1a56db;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 3px;
+        margin-bottom: 8px;
+        letter-spacing: 0.8px;
+      }
+
+      /* Objective */
+      .objective {
+        font-size: 9.5pt;
+        color: #333;
+        line-height: 1.5;
+      }
+
+      /* Education */
+      .edu-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .edu-row .school {
+        font-weight: 600;
+        font-size: 10pt;
+      }
+      .edu-row .date {
+        font-size: 9pt;
+        color: #666;
+      }
+      .edu-detail {
+        font-size: 9.5pt;
+        color: #444;
+        margin-top: 2px;
+      }
+
+      /* Skills table */
+      .skills-grid {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 3px 12px;
+        font-size: 9.5pt;
+      }
+      .skills-grid .label {
+        font-weight: 600;
+        color: #333;
+      }
+      .skills-grid .value {
+        color: #444;
+      }
+
+      /* Experience */
+      .exp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 2px;
+      }
+      .exp-header .role {
+        font-weight: 600;
+        font-size: 10pt;
+      }
+      .exp-header .date {
+        font-size: 9pt;
+        color: #666;
+      }
+      .exp-company {
+        font-size: 9.5pt;
+        color: #555;
+        font-style: italic;
+        margin-bottom: 4px;
+      }
+      .exp-list {
+        padding-left: 16px;
+        font-size: 9.5pt;
+        color: #333;
+      }
+      .exp-list li {
+        margin-bottom: 2px;
+      }
+      .exp-result {
+        font-size: 9pt;
+        color: #1a56db;
+        font-weight: 500;
+        margin-top: 3px;
+        padding-left: 16px;
+      }
+
+      /* Projects */
+      .project {
+        margin-bottom: 10px;
+      }
+      .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .project-header .name {
+        font-weight: 600;
+        font-size: 10pt;
+      }
+      .project-header .date {
+        font-size: 9pt;
+        color: #666;
+      }
+      .project-tech {
+        font-size: 8.5pt;
+        color: #1a56db;
+        margin: 2px 0 3px 0;
+        font-family: "Consolas", "Courier New", monospace;
+      }
+      .project-list {
+        padding-left: 16px;
+        font-size: 9.5pt;
+        color: #333;
+      }
+      .project-list li {
+        margin-bottom: 2px;
+      }
+
+      /* Activities */
+      .activity-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 9.5pt;
+      }
+      .activity-row .org {
+        font-weight: 500;
+      }
+      .activity-row .date {
+        color: #666;
+        font-size: 9pt;
+      }
+      .activity-detail {
+        font-size: 9pt;
+        color: #555;
+        padding-left: 0;
+        margin-top: 1px;
+      }
+
+      @media print {
+        body {
+          padding: 35px 45px;
+        }
+        a {
+          color: #1a56db !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <h1>PHAM NGOC GIA BAO</h1>
+      <div class="subtitle">Backend Java Intern</div>
+      <div class="contact">
+        <span>Ho Chi Minh City, Vietnam</span><span class="sep">|</span>
+        <span>0907 506 049</span><span class="sep">|</span>
+        <span
+          ><a href="mailto:pn.giabao9705@gmail.com"
+            >pn.giabao9705@gmail.com</a
+          ></span
+        ><span class="sep">|</span>
+        <span
+          ><a href="https://github.com/giabaocode"
+            >github.com/giabaocode</a
+          ></span
+        ><span class="sep">|</span>
+        <span><a href="https://lunfa.net">lunfa.net</a></span>
+      </div>
+    </div>
+
+    <!-- OBJECTIVE -->
+    <div class="section">
+      <div class="section-title">Career Objective</div>
+      <p class="objective">
+        Third-year Information Technology student at HCMUS (GPA 3.46/4.0) with
+        hands-on experience building 7 fullstack projects across diverse tech
+        stacks including Spring Boot 3, Node.js/Express, PostgreSQL, React, and
+        Android. Completed a paid freelance project deployed to production
+        (lunfa.net). Seeking a Backend Java Intern position to apply knowledge
+        of Spring Boot, relational database design, layered architecture, and
+        concurrency handling in a professional environment.
+      </p>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="section">
+      <div class="section-title">Education</div>
+      <div class="edu-row">
+        <span class="school"
+          >University of Science — Vietnam National University HCMC</span
+        >
+        <span class="date">Sep 2023 – Present</span>
+      </div>
+      <div class="edu-detail">
+        B.Sc. in Information Technology · GPA: 3.46 / 4.0 (8.01 / 10) · Notable: OOP (9.8/10), Software Engineering
+        (8.5/10)
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="section">
+      <div class="section-title">Technical Skills</div>
+      <div class="skills-grid">
+        <span class="label">Languages</span
+        ><span class="value">Java, JavaScript / TypeScript, SQL</span>
+        <span class="label">Backend</span
+        ><span class="value"
+          >Spring Boot 3 (Security, JPA, Redis, Resilience4j, Cron), Node.js +
+          Express, Prisma ORM</span
+        >
+        <span class="label">Database</span
+        ><span class="value"
+          >PostgreSQL (transactions, optimistic locking, FTS, raw SQL), MongoDB,
+          Redis</span
+        >
+        <span class="label">Frontend</span
+        ><span class="value"
+          >React 18/19, Next.js 16 (App Router), Tailwind CSS, Radix UI,
+          TanStack Query</span
+        >
+        <span class="label">Mobile</span
+        ><span class="value"
+          >Android (Java, MVVM, Retrofit, Room, WorkManager, MediaPlayer)</span
+        >
+        <span class="label">DevOps</span
+        ><span class="value">Docker Compose, Supabase, Cloudinary, Vercel</span>
+        <span class="label">Architecture</span
+        ><span class="value"
+          >Layered Architecture, MVVM + Repository, REST API, Domain Events,
+          Circuit Breaker</span
+        >
+        <span class="label">Tools</span
+        ><span class="value"
+          >Git, Postman, Jira, K6 (load testing), Android Studio</span
+        >
+      </div>
+    </div>
+
+    <!-- EXPERIENCE -->
+    <div class="section">
+      <div class="section-title">Experience</div>
+      <div class="exp-header">
+        <span class="role">Fullstack Developer (Freelance)</span>
+        <span class="date">Mar 2026 – Apr 2026</span>
+      </div>
+      <div class="exp-company">
+        Research Group — Ho Chi Minh City University of Education
+      </div>
+      <ul class="exp-list">
+        <li>
+          Developed a fullstack AI chatbot web application for Chinese language
+          learning, serving a university research project end-to-end
+          (requirements → deployment).
+        </li>
+        <li>
+          Engineered a 3,000-word system prompt for Google Gemini AI (Vertex AI)
+          with structured JSON output and 3-layer parse fallback for malformed
+          responses.
+        </li>
+        <li>
+          Built REST API (Node.js/Express) with multi-method authentication
+          (Email OTP + Google OAuth2 + Facebook OAuth2) secured by JWT.
+        </li>
+        <li>
+          Designed responsive chat UI (React 19): real-time error highlighting,
+          correction cards, conversation history with MongoDB persistence.
+        </li>
+      </ul>
+      <div class="exp-result">
+        → Successfully deployed at lunfa.net, actively used by the research
+        team.
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="section">
+      <div class="section-title">Featured Projects</div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="name"
+            >UniHub Workshop — University Workshop Management System</span
+          >
+          <span class="date">Apr – May 2026</span>
+        </div>
+        <div class="project-tech">
+          Java 21 · Spring Boot 3 · PostgreSQL · Redis · Resilience4j · React
+          PWA · K6
+        </div>
+        <ul class="project-list">
+          <li>
+            Built Admin panel, PWA offline check-in (QR scanning without
+            network), and 2-tier Rate Limiting (Redis with in-memory fallback).
+          </li>
+          <li>
+            Implemented Optimistic Locking to prevent race conditions (seat
+            overselling) and Circuit Breaker for payment gateway fault
+            tolerance.
+          </li>
+          <li>
+            Authored K6 load test simulating 12,000 VUs spike traffic — achieved
+            p95 &lt; 2s, error rate &lt; 1%.
+          </li>
+        </ul>
+      </div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="name">Online Auction Platform</span>
+          <span class="date">Nov 2025 – Jan 2026</span>
+        </div>
+        <div class="project-tech">
+          TypeScript · Express 5 · PostgreSQL · React 18 · Radix UI · Cloudinary
+          · node-cron
+        </div>
+        <ul class="project-list">
+          <li>
+            Designed 17-table database schema; developed Bidder/Seller systems
+            (bidding, listing, chat, order tracking).
+          </li>
+          <li>
+            Handled concurrency with row-level locking (<code
+              >SELECT ... FOR UPDATE</code
+            >), auto-bid engine (3 cases), and anti-sniping mechanism.
+          </li>
+          <li>
+            Built post-auction 4-step workflow + 6 types of async email
+            notifications via Cron Job.
+          </li>
+        </ul>
+      </div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="name"
+            >PetCareX — Veterinary Clinic Management System</span
+          >
+          <span class="date">Nov 2025 – Jan 2026</span>
+        </div>
+        <div class="project-tech">
+          TypeScript · Express 4 · PostgreSQL (raw SQL) · React 18 · TanStack
+          Query · Recharts
+        </div>
+        <ul class="project-list">
+          <li>
+            Sole implementer (frontend + backend) in a 4-person team; others
+            handled design.
+          </li>
+          <li>
+            Built booking flow with doctor conflict detection, auto-invoice
+            generation, subscription packages, loyalty points, and 5-role RBAC.
+          </li>
+        </ul>
+      </div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="name">Melodix — Android Music Streaming App</span>
+          <span class="date">Mar – Apr 2026</span>
+        </div>
+        <div class="project-tech">
+          Java · Android · MVVM · Supabase · Retrofit · Room · WorkManager
+        </div>
+        <ul class="project-list">
+          <li>
+            Developed Artist module (upload/manage songs), artist & album detail
+            pages, search, share, and profile features.
+          </li>
+          <li>
+            Co-designed database on Supabase; architected with MVVM + Repository
+            pattern (12 Repos, 14 API Services).
+          </li>
+        </ul>
+      </div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="name">Coffee Shop POS & Management System</span>
+          <span class="date">Jun – Aug 2025</span>
+        </div>
+        <div class="project-tech">
+          React 19 · Express 5 · PostgreSQL · Docker Compose · Chart.js
+        </div>
+        <ul class="project-list">
+          <li>
+            Built entire POS module (menu browsing, cart, 3-step checkout);
+            designed UI/UX for the full system.
+          </li>
+          <li>
+            Product actively used in a real coffee shop (GUTA) for daily
+            operations.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ACTIVITIES -->
+    <div class="section">
+      <div class="section-title">Extracurricular Activities</div>
+      <div class="activity-row">
+        <span class="org">HOPE Volunteer Club HCMC — Event Operator</span>
+        <span class="date">Mar – Dec 2024</span>
+      </div>
+      <div class="activity-detail">
+        Organized and operated community volunteer events.
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Pham Ngoc Gia Bao — Backend Java & Business Analyst intern. I model messy business processes into reliable state machines. 7 shipped systems, 2 in production."
+    />
+    <meta name="theme-color" content="#0a0e14" />
+    <title>Gia Bao — Workflow Engineer · Backend Java & BA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" id="header">
+      <nav class="nav">
+        <a class="logo" href="#top">
+          <span class="logo-mark"></span>gia_bao<span class="logo-cursor">_</span>
+        </a>
+
+        <div class="nav-links" id="nav-links">
+          <a href="#projects">Workflows</a>
+          <a href="#skills">Capabilities</a>
+          <a href="#experience">Log</a>
+          <a href="#contact">Connect</a>
+        </div>
+
+        <div class="nav-right">
+          <span class="sys-status" title="Open to internship offers">
+            <span class="sys-dot"></span>AVAILABLE
+          </span>
+          <button class="theme-btn" type="button" aria-label="Toggle theme" id="theme-btn">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <a class="btn-resume" href="./assets/Resume.html">Resume</a>
+          <button class="hamburger" type="button" aria-label="Menu" id="hamburger">
+            <span></span><span></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- ===== MOBILE MENU ===== -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#projects">Workflows</a>
+      <a href="#skills">Capabilities</a>
+      <a href="#experience">Log</a>
+      <a href="#contact">Connect</a>
+      <a href="./assets/Resume.html" class="mobile-resume">Open Resume</a>
+    </div>
+
+    <main id="main">
+
+      <!-- ====== HERO ====== -->
+      <section class="hero" id="top">
+        <p class="hero-tag">Backend Java · Business Analyst · Intern</p>
+        <h1>
+          I turn messy business processes<br />
+          into <span class="hl">reliable state machines.</span>
+        </h1>
+        <p class="hero-sub">
+          Pham Ngoc Gia Bao — IT student at HCMUS, Ho Chi Minh City.
+          I've shipped <strong>7 systems</strong> across Spring Boot, Express, PostgreSQL,
+          React and Android — <strong>2 of them run real businesses in production.</strong>
+          What I actually do: model human workflows as rigorous states, then keep them
+          correct under concurrency.
+        </p>
+
+        <!-- Signature animated pipeline -->
+        <div class="hero-machine" aria-hidden="true">
+          <div class="hm-node hm-1"><span class="hm-dot"></span><span class="hm-lbl">DRAFT</span></div>
+          <span class="hm-wire"></span>
+          <div class="hm-node hm-2"><span class="hm-dot"></span><span class="hm-lbl">IN REVIEW</span></div>
+          <span class="hm-wire"></span>
+          <div class="hm-node hm-3"><span class="hm-dot"></span><span class="hm-lbl">SHIPPED ✓</span></div>
+        </div>
+
+        <div class="hero-links">
+          <a href="mailto:pn.giabao9705@gmail.com">pn.giabao9705@gmail.com</a>
+          <span class="dot"></span>
+          <a href="https://github.com/giabaocode" target="_blank" rel="noopener">GitHub</a>
+          <span class="dot"></span>
+          <a href="tel:+84907506049">0907 506 049</a>
+        </div>
+      </section>
+
+      <!-- ====== RUNTIME METRICS ====== -->
+      <section class="numbers" aria-label="Runtime metrics">
+        <div class="number-item">
+          <span class="number" data-count="7">0</span>
+          <span class="number-label">Systems shipped</span>
+        </div>
+        <div class="number-item">
+          <span class="number" data-count="2">0</span>
+          <span class="number-label">Live in production</span>
+        </div>
+        <div class="number-item">
+          <span class="number" data-count="50" data-plus="1">0</span>
+          <span class="number-label">API endpoints designed</span>
+        </div>
+        <div class="number-item">
+          <span class="number" data-count="12000">0</span>
+          <span class="number-label">Virtual users load-tested</span>
+        </div>
+      </section>
+
+      <!-- ====== PROJECTS / WORKFLOWS ====== -->
+      <section class="section" id="projects">
+        <div class="section-header">
+          <div>
+            <h2>Workflows I built</h2>
+            <p class="section-note">
+              Each project is a state machine. <span class="hint">Tap a node</span> to see what
+              happens at that stage — and the hard problem I solved there.
+            </p>
+          </div>
+          <div class="filters" aria-label="Filter workflows">
+            <button class="filter active" data-filter="all">All</button>
+            <button class="filter" data-filter="backend">Backend</button>
+            <button class="filter" data-filter="ba">BA</button>
+            <button class="filter" data-filter="ai">AI</button>
+            <button class="filter" data-filter="mobile">Mobile</button>
+          </div>
+        </div>
+
+        <div class="project-grid" id="project-grid">
+          <!-- injected by script.js -->
+        </div>
+      </section>
+
+      <!-- ====== SKILLS / CAPABILITIES ====== -->
+      <section class="section" id="skills">
+        <h2>Capability registry</h2>
+        <div class="skills-grid">
+          <div class="skill-card">
+            <h3><span class="sk-tick"></span>Backend</h3>
+            <p>Spring Boot 3 · Java 21 · Node.js · Express · REST design · JWT · rate limiting · async events · Resilience4j</p>
+          </div>
+          <div class="skill-card">
+            <h3><span class="sk-tick"></span>Database &amp; concurrency</h3>
+            <p>PostgreSQL · transactions · row-level &amp; optimistic locking · CTEs · full-text search · MongoDB · Redis</p>
+          </div>
+          <div class="skill-card">
+            <h3><span class="sk-tick"></span>Business analysis</h3>
+            <p>Workflow decomposition · state-machine modeling · user stories · API contracts · role-based requirements · sprint planning</p>
+          </div>
+          <div class="skill-card">
+            <h3><span class="sk-tick"></span>Frontend</h3>
+            <p>React 18–19 · Next.js App Router · Tailwind CSS · React Query · React Hook Form · Recharts</p>
+          </div>
+          <div class="skill-card">
+            <h3><span class="sk-tick"></span>AI integration</h3>
+            <p>Gemini / Vertex AI · prompt engineering (~3k-word systems) · structured JSON output · PDF summarization</p>
+          </div>
+          <div class="skill-card">
+            <h3><span class="sk-tick"></span>Tooling &amp; ops</h3>
+            <p>Git · Docker Compose · Postman · Jira · K6 load testing · PWA / Service Workers · Android Studio</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== EXPERIENCE / LOG ====== -->
+      <section class="section" id="experience">
+        <h2>Transition log</h2>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-date">Mar – Apr 2026</div>
+            <div class="tl-content">
+              <h3>Fullstack Developer · <span class="tl-type">Freelance</span></h3>
+              <p class="tl-org">Research group · HCMC University of Education</p>
+              <p>
+                Delivered Lunfa end-to-end — requirements, ~3,000-word AI prompt, Express API,
+                multi-method auth, MongoDB, React UI — and deployed to production at
+                <strong>lunfa.net</strong>, now used in an academic research study.
+              </p>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-date">2025 – 2026</div>
+            <div class="tl-content">
+              <h3>Analysis · DB · Backend lead · <span class="tl-type">Academic teams</span></h3>
+              <p>
+                Owned requirement analysis, database design and backend modules across 6 team
+                projects: POS (running in a real GUTA coffee shop), auction platform, workshop
+                ticketing, music app, dorm management and a vet clinic.
+              </p>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-date">Mar – Dec 2024</div>
+            <div class="tl-content">
+              <h3>Event Operator · <span class="tl-type">Volunteer</span></h3>
+              <p class="tl-org">HOPE Volunteer Club · HCMC</p>
+              <p>Coordinated community events — planning, logistics and on-site execution.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== EDUCATION ====== -->
+      <section class="section section-edu" id="education">
+        <h2>Education</h2>
+        <div class="edu-card">
+          <div>
+            <h3>University of Science — VNU HCMC</h3>
+            <p>B.Sc. Information Technology · GPA 3.46 / 4.0 (8.01 / 10)</p>
+          </div>
+          <time>Sep 2023 – Present</time>
+        </div>
+        <p class="edu-courses">
+          Top coursework: OOP <strong>9.8</strong> · Applied Statistics <strong>9.5</strong> ·
+          Software Engineering <strong>8.5</strong> · Web Development <strong>8.3</strong> ·
+          Fundamentals of AI <strong>8.2</strong>
+        </p>
+      </section>
+
+      <!-- ====== CONTACT ====== -->
+      <section class="section" id="contact">
+        <h2>Open a transition</h2>
+        <p class="contact-intro">
+          Looking for a <strong>Backend Java</strong> or <strong>BA</strong> internship in Ho Chi Minh City.
+          Best fit: teams that care about clear requirements, clean APIs and systems that stay
+          correct under load.
+        </p>
+        <div class="contact-grid">
+          <a href="mailto:pn.giabao9705@gmail.com" class="contact-link">
+            <span class="contact-label">Email</span>
+            <span>pn.giabao9705@gmail.com</span>
+          </a>
+          <a href="tel:+84907506049" class="contact-link">
+            <span class="contact-label">Phone</span>
+            <span>0907 506 049</span>
+          </a>
+          <a href="https://github.com/giabaocode" target="_blank" rel="noopener" class="contact-link">
+            <span class="contact-label">GitHub</span>
+            <span>giabaocode</span>
+          </a>
+          <a href="https://www.facebook.com/lamineyabao21" target="_blank" rel="noopener" class="contact-link">
+            <span class="contact-label">Facebook</span>
+            <span>Gia Bao</span>
+          </a>
+          <a href="./assets/CV_Detail.html" class="contact-link">
+            <span class="contact-label">CV</span>
+            <span>Detailed version →</span>
+          </a>
+        </div>
+        <button class="copy-btn" type="button" id="copy-email" data-email="pn.giabao9705@gmail.com">
+          Copy email address
+        </button>
+      </section>
+
+    </main>
+
+    <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+
+    <footer class="footer">
+      <span>© <span id="year"></span> Pham Ngoc Gia Bao · built from scratch, no template</span>
+      <span class="foot-status"><span class="sys-dot"></span>Ho Chi Minh City</span>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
