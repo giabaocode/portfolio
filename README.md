@@ -37,20 +37,18 @@ All project content is the `PROJECTS` array at the top of `script.js`. Each entr
 `flow` is the list of states; a state with `challenge` + `fix` gets an amber dot
 and shows the problem/solution when clicked.
 
-## 3D avatar
+## Hero animation — "the live engine"
 
-The hero shows an interactive 3D model (`<model-viewer>`, loaded from Google's CDN).
-The model file is **self-hosted** at `assets/avatar.glb` so it works for every visitor
-regardless of network/DNS — no dependency on an external model host.
+The right side of the hero is a self-contained `<canvas>` animation: a request
+packet flowing through a backend system (CLIENT → API → AUTH → SERVICE → LOCK →
+DB → CACHE → QUEUE → EMAIL), with nodes lighting up as packets arrive. It ties
+into the site's node/transition language and reinforces the "I build reliable
+systems" theme.
 
-Current model is a placeholder "build bot" (the `RobotExpressive` sample from the
-model-viewer / three.js assets, CC0). To use a 3D avatar of yourself:
-
-1. Create a free avatar at https://readyplayer.me (needs the site reachable — if your
-   ISP DNS blocks it, switch DNS to `1.1.1.1` / `8.8.8.8` first).
-2. Download its `.glb` and replace `assets/avatar.glb` (keep the same filename), **or**
-   change `AVATAR_URL` near the top of `script.js` to point at your `.glb`.
-3. `git add -A && git commit -m "my avatar" && git push`.
+- Pure vanilla JS in `script.js` (the `heroEngine()` block) — no libraries, no assets.
+- Reads theme colors live from CSS variables (dark/light both correct).
+- Pauses when off-screen / tab hidden; renders a single static frame under
+  `prefers-reduced-motion`. Edit the `NODES` / `PATHS` objects to change the graph.
 
 ## Notes
 

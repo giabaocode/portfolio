@@ -432,47 +432,170 @@ copyBtn?.addEventListener("click", async () => {
 });
 
 /* ===========================================
-   3D AVATAR
+   HERO ENGINE — a live "running system" diagram
    ===========================================
-   ⬇⬇⬇  THAY URL NÀY bằng avatar Ready Player Me CỦA BẠN  ⬇⬇⬇
-   1. Vào https://readyplayer.me → tạo avatar từ 1 tấm selfie (miễn phí)
-   2. Lấy link .glb, dạng: https://models.readyplayer.me/<id>.glb
-   3. Dán vào AVATAR_URL bên dưới, rồi git commit + push.
-   Hiện đang dùng model "build bot" self-host trong ./assets/avatar.glb
-   (không phụ thuộc DNS/CDN ngoài → ai xem cũng thấy). Thay file đó HOẶC đổi
-   AVATAR_URL sang link .glb của bạn là xong.                                  */
-const AVATAR_URL = "./assets/avatar.glb";
+   A request packet flows through backend nodes (CLIENT → API → AUTH →
+   SERVICE → LOCK → DB → CACHE → QUEUE → EMAIL); nodes light up as packets
+   arrive. Pure canvas, no assets/deps. Pauses off-screen, reads theme
+   colors live, and renders a single static frame for reduced-motion.        */
+(function heroEngine() {
+  const canvas = document.getElementById("engine-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const stage3d = document.getElementById("hero-3d");
-const avatar = document.getElementById("avatar");
-if (avatar && stage3d) {
-  const reduce3d = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduce3d) avatar.removeAttribute("auto-rotate");
+  // Graph (normalized 0..1 coordinates)
+  const NODES = {
+    client: { x: 0.10, y: 0.50, label: "CLIENT" },
+    api:    { x: 0.34, y: 0.50, label: "API" },
+    auth:   { x: 0.34, y: 0.16, label: "AUTH" },
+    svc:    { x: 0.60, y: 0.50, label: "SERVICE" },
+    queue:  { x: 0.60, y: 0.16, label: "QUEUE" },
+    lock:   { x: 0.60, y: 0.86, label: "LOCK" },
+    db:     { x: 0.87, y: 0.50, label: "DB" },
+    cache:  { x: 0.87, y: 0.16, label: "CACHE" },
+    email:  { x: 0.87, y: 0.86, label: "EMAIL" },
+  };
+  const PATHS = [
+    ["client", "api", "svc", "db", "cache"],
+    ["client", "api", "auth"],
+    ["svc", "queue", "email"],
+    ["api", "svc", "lock"],
+  ];
 
-  avatar.addEventListener("load", () => {
-    stage3d.classList.add("loaded");
-    // If the model ships animation clips (e.g. an idle), play one on loop.
-    // Plain Ready Player Me avatars usually have none — the slow auto-rotate carries it.
-    try {
-      const clips = avatar.availableAnimations || [];
-      if (clips.length) {
-        avatar.animationName = clips.find((c) => /idle|breath|stand|wave/i.test(c)) || clips[0];
-        if (!reduce3d) avatar.play({ repetitions: Infinity });
-      }
-    } catch (_) { /* no-op */ }
-  });
+  // Distinct edges to draw
+  const seen = new Set(); const EDGES = [];
+  PATHS.forEach((p) => { for (let i = 0; i < p.length - 1; i++) { const k = p[i] + ">" + p[i + 1]; if (!seen.has(k)) { seen.add(k); EDGES.push([p[i], p[i + 1]]); } } });
 
-  avatar.addEventListener("error", () => stage3d.classList.add("failed"));
+  // index-based pseudo-random so reload looks varied without Math.random reliance
+  Object.values(NODES).forEach((n, i) => { n.glow = 0; n.phase = i * 1.7; });
 
-  // Bail out gracefully if the browser has no WebGL at all.
-  const probe = document.createElement("canvas");
-  const hasWebGL = !!(probe.getContext("webgl") || probe.getContext("experimental-webgl"));
-  if (!hasWebGL) {
-    stage3d.classList.add("failed");
-  } else {
-    avatar.setAttribute("src", AVATAR_URL);
+  const packets = [];
+  PATHS.forEach((p, i) => { for (let j = 0; j < 2; j++) packets.push({ path: p, seg: 0, t: 0, speed: 0.46 + (i * 0.07 + j * 0.05), wait: j * 1.5 + i * 0.45 }); });
+
+  // Colors pulled live from CSS variables (so dark/light both look right)
+  const COL = {};
+  function refreshColors() {
+    const cs = getComputedStyle(document.documentElement);
+    const get = (v, d) => (cs.getPropertyValue(v).trim() || d);
+    COL.signal = get("--signal", "#43e08b");
+    COL.wire = get("--wire", "#2c3a4d");
+    COL.node = get("--bg-card", "#11161f");
+    COL.text = get("--text-2", "#8a95a8");
+    COL.text3 = get("--text-3", "#5d6a7e");
   }
-}
+  refreshColors();
+  document.getElementById("theme-btn")?.addEventListener("click", () => setTimeout(refreshColors, 0));
+
+  function sigA(a) {
+    let h = COL.signal.replace("#", "");
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  let W = 0, H = 0;
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    W = r.width; H = r.height;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  if ("ResizeObserver" in window) new ResizeObserver(resize).observe(canvas);
+  resize();
+
+  const pad = 28;
+  const px = (n) => pad + n.x * (W - 2 * pad);
+  const py = (n) => pad + n.y * (H - 2 * pad);
+
+  // Cursor parallax (desktop only)
+  let mx = 0, my = 0;
+  if (window.matchMedia("(pointer:fine)").matches && !reduce) {
+    const host = canvas.parentElement;
+    host.addEventListener("pointermove", (e) => {
+      const r = canvas.getBoundingClientRect();
+      mx = (e.clientX - r.left) / r.width - 0.5;
+      my = (e.clientY - r.top) / r.height - 0.5;
+    });
+    host.addEventListener("pointerleave", () => { mx = 0; my = 0; });
+  }
+
+  let t = 0, last = 0, raf = null, running = false;
+  function draw(dt) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(-mx * 14, -my * 14);
+
+    // node positions (with a gentle bob)
+    const pos = {};
+    for (const id in NODES) {
+      const n = NODES[id];
+      pos[id] = { x: px(n), y: py(n) + (reduce ? 0 : Math.sin(t * 1.1 + n.phase) * 3) };
+    }
+
+    // edges
+    ctx.lineWidth = 1.4; ctx.strokeStyle = COL.wire;
+    EDGES.forEach(([a, b]) => { ctx.beginPath(); ctx.moveTo(pos[a].x, pos[a].y); ctx.lineTo(pos[b].x, pos[b].y); ctx.stroke(); });
+
+    // packets
+    if (!reduce) {
+      packets.forEach((pk) => {
+        if (pk.wait > 0) { pk.wait -= dt; return; }
+        const a = pos[pk.path[pk.seg]], b = pos[pk.path[pk.seg + 1]];
+        pk.t += dt * pk.speed;
+        if (pk.t >= 1) {
+          pk.t = 0; pk.seg++;
+          NODES[pk.path[pk.seg]].glow = 1;
+          if (pk.seg >= pk.path.length - 1) { pk.seg = 0; pk.wait = 1.1 + (pk.speed * 2); }
+          return;
+        }
+        const x = a.x + (b.x - a.x) * pk.t, y = a.y + (b.y - a.y) * pk.t;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, 7);
+        g.addColorStop(0, sigA(0.95)); g.addColorStop(1, sigA(0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+      });
+    }
+
+    // nodes
+    for (const id in NODES) {
+      const n = NODES[id], p = pos[id];
+      n.glow = Math.max(0, n.glow - dt * 1.6);
+      const lit = reduce ? 0.5 : n.glow;
+      if (lit > 0.01) { ctx.fillStyle = sigA(0.18 * lit); ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI * 2); ctx.fill(); }
+      ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, Math.PI * 2);
+      ctx.fillStyle = lit > 0.05 ? COL.signal : COL.node; ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = COL.signal;
+      ctx.globalAlpha = lit > 0.05 ? 1 : 0.5; ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.fillStyle = lit > 0.3 ? COL.text : COL.text3;
+      ctx.font = "600 9px 'JetBrains Mono', ui-monospace, monospace";
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText(n.label, p.x, p.y + 11);
+    }
+
+    ctx.restore();
+  }
+
+  function frame(now) {
+    if (!last) last = now;
+    let dt = (now - last) / 1000; last = now;
+    if (dt > 0.05) dt = 0.05;
+    t += dt; draw(dt);
+    raf = requestAnimationFrame(frame);
+  }
+  function start() { if (running) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
+  function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
+
+  if (reduce) {
+    draw(0);
+  } else {
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? start() : stop())), { threshold: 0.05 }).observe(canvas);
+    } else { start(); }
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+  }
+})();
 
 /* ---------- Scroll to top ---------- */
 const toTop = document.getElementById("to-top");
