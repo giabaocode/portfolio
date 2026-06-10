@@ -259,6 +259,7 @@ function projectMarkup(p) {
 
   return `
     <article class="project" data-tags="${p.tags.join(" ")}">
+      <span class="spotlight" aria-hidden="true"></span>
       <div class="project-top">
         <div class="project-head">
           <div class="project-meta">
@@ -596,6 +597,68 @@ copyBtn?.addEventListener("click", async () => {
     document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
   }
 })();
+
+/* ===========================================
+   WOW LAYER — boot intro · scroll bar · card spotlight
+   =========================================== */
+
+/* Boot intro + hero entrance */
+(function boot() {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const bootEl = document.getElementById("boot");
+  const log = document.getElementById("boot-log");
+  const ready = () => document.body.classList.add("ready");
+  const finish = () => { bootEl && bootEl.classList.add("done"); ready(); };
+
+  if (reduce || sessionStorage.getItem("booted") || !bootEl || !log) {
+    bootEl && bootEl.classList.add("done");
+    ready();
+    return;
+  }
+  sessionStorage.setItem("booted", "1");
+
+  const lines = [
+    { t: "$ ./giabao --boot", c: "cmd" },
+    { t: "[ ok ] loading workflows ............ 7", c: "" },
+    { t: "[ ok ] datastores ......... pg · mongo · redis", c: "" },
+    { t: "[ ok ] state machines online", c: "" },
+    { t: "> ready. welcome.", c: "ok" },
+  ];
+  let i = 0;
+  (function typeLine() {
+    if (i >= lines.length) { setTimeout(finish, 520); return; }
+    const ln = lines[i++];
+    const span = document.createElement("span");
+    if (ln.c) span.className = ln.c;
+    span.textContent = ln.t + "\n";
+    log.appendChild(span);
+    setTimeout(typeLine, 230);
+  })();
+  setTimeout(finish, 2800); // safety: never trap the visitor
+})();
+
+/* Scroll progress bar */
+const progressBar = document.getElementById("scroll-progress");
+if (progressBar) {
+  const onScroll = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    progressBar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+}
+
+/* Project card cursor spotlight */
+if (window.matchMedia("(pointer:fine)").matches) {
+  document.getElementById("project-grid")?.addEventListener("pointermove", (e) => {
+    const card = e.target.closest(".project");
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty("--mx", ((e.clientX - r.left) / r.width) * 100 + "%");
+    card.style.setProperty("--my", ((e.clientY - r.top) / r.height) * 100 + "%");
+  });
+}
 
 /* ---------- Scroll to top ---------- */
 const toTop = document.getElementById("to-top");
