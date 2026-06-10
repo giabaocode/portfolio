@@ -477,6 +477,15 @@ copyBtn?.addEventListener("click", async () => {
 
   // Colors pulled live from CSS variables (so dark/light both look right)
   const COL = {};
+  // Glow sprite, pre-rendered once per theme — avoids per-frame radial gradients
+  const glow = document.createElement("canvas"); glow.width = glow.height = 36;
+  const gctx = glow.getContext("2d");
+  function buildGlow() {
+    gctx.clearRect(0, 0, 36, 36);
+    const g = gctx.createRadialGradient(18, 18, 0, 18, 18, 18);
+    g.addColorStop(0, sigA(1)); g.addColorStop(0.5, sigA(0.5)); g.addColorStop(1, sigA(0));
+    gctx.fillStyle = g; gctx.beginPath(); gctx.arc(18, 18, 18, 0, Math.PI * 2); gctx.fill();
+  }
   function refreshColors() {
     const cs = getComputedStyle(document.documentElement);
     const get = (v, d) => (cs.getPropertyValue(v).trim() || d);
@@ -485,6 +494,7 @@ copyBtn?.addEventListener("click", async () => {
     COL.node = get("--bg-card", "#11161f");
     COL.text = get("--text-2", "#8a95a8");
     COL.text3 = get("--text-3", "#5d6a7e");
+    buildGlow();
   }
   refreshColors();
   document.getElementById("theme-btn")?.addEventListener("click", () => setTimeout(refreshColors, 0));
@@ -553,9 +563,7 @@ copyBtn?.addEventListener("click", async () => {
           return;
         }
         const x = a.x + (b.x - a.x) * pk.t, y = a.y + (b.y - a.y) * pk.t;
-        const g = ctx.createRadialGradient(x, y, 0, x, y, 7);
-        g.addColorStop(0, sigA(0.95)); g.addColorStop(1, sigA(0));
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.drawImage(glow, x - 9, y - 9, 18, 18);
       });
     }
 
@@ -564,7 +572,7 @@ copyBtn?.addEventListener("click", async () => {
       const n = NODES[id], p = pos[id];
       n.glow = Math.max(0, n.glow - dt * 1.6);
       const lit = reduce ? 0.5 : n.glow;
-      if (lit > 0.01) { ctx.fillStyle = sigA(0.18 * lit); ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI * 2); ctx.fill(); }
+      if (lit > 0.01) { ctx.globalAlpha = 0.55 * lit; ctx.drawImage(glow, p.x - 16, p.y - 16, 32, 32); ctx.globalAlpha = 1; }
       ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, Math.PI * 2);
       ctx.fillStyle = lit > 0.05 ? COL.signal : COL.node; ctx.fill();
       ctx.lineWidth = 2; ctx.strokeStyle = COL.signal;
@@ -579,11 +587,13 @@ copyBtn?.addEventListener("click", async () => {
   }
 
   function frame(now) {
-    if (!last) last = now;
-    let dt = (now - last) / 1000; last = now;
-    if (dt > 0.05) dt = 0.05;
-    t += dt; draw(dt);
     raf = requestAnimationFrame(frame);
+    if (!last) last = now;
+    const elapsed = (now - last) / 1000;
+    if (elapsed < 0.032) return; // cap at ~30fps — plenty for an ambient diagram
+    last = now;
+    const dt = Math.min(elapsed, 0.05);
+    t += dt; draw(dt);
   }
   function start() { if (running) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
@@ -649,15 +659,23 @@ if (progressBar) {
   onScroll();
 }
 
-/* Project card cursor spotlight */
+/* Project card cursor spotlight (rAF-throttled to avoid layout thrash) */
 if (window.matchMedia("(pointer:fine)").matches) {
-  document.getElementById("project-grid")?.addEventListener("pointermove", (e) => {
-    const card = e.target.closest(".project");
-    if (!card) return;
-    const r = card.getBoundingClientRect();
-    card.style.setProperty("--mx", ((e.clientX - r.left) / r.width) * 100 + "%");
-    card.style.setProperty("--my", ((e.clientY - r.top) / r.height) * 100 + "%");
-  });
+  const grid = document.getElementById("project-grid");
+  let pending = false, lastEv = null;
+  grid?.addEventListener("pointermove", (e) => {
+    lastEv = e;
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => {
+      pending = false;
+      const card = lastEv.target.closest && lastEv.target.closest(".project");
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", ((lastEv.clientX - r.left) / r.width) * 100 + "%");
+      card.style.setProperty("--my", ((lastEv.clientY - r.top) / r.height) * 100 + "%");
+    });
+  }, { passive: true });
 }
 
 /* Hero role rotator */
@@ -712,11 +730,13 @@ if (window.matchMedia("(pointer:fine)").matches) {
   if (!window.matchMedia("(pointer:fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   document.querySelectorAll(".btn-resume, .copy-btn, .mobile-resume").forEach((el) => {
     el.classList.add("magnetic");
+    let rect = null;
+    el.addEventListener("pointerenter", () => { rect = el.getBoundingClientRect(); });
     el.addEventListener("pointermove", (e) => {
-      const r = el.getBoundingClientRect();
+      const r = rect || (rect = el.getBoundingClientRect());
       el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.3}px, ${(e.clientY - r.top - r.height / 2) * 0.3}px)`;
     });
-    el.addEventListener("pointerleave", () => { el.style.transform = ""; });
+    el.addEventListener("pointerleave", () => { el.style.transform = ""; rect = null; });
   });
 })();
 
