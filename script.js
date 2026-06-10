@@ -660,6 +660,66 @@ if (window.matchMedia("(pointer:fine)").matches) {
   });
 }
 
+/* Hero role rotator */
+(function rotator() {
+  const el = document.getElementById("role-rotator");
+  if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const roles = ["Backend Java Engineer", "Business Analyst", "Systems Thinker", "API Designer"];
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % roles.length;
+    el.style.opacity = "0"; el.style.transform = "translateY(-5px)";
+    setTimeout(() => {
+      el.textContent = roles[i];
+      el.style.opacity = "1"; el.style.transform = "translateY(0)";
+    }, 280);
+  }, 2600);
+})();
+
+/* Tech marquee — duplicate the track for a seamless loop */
+(function marquee() {
+  const t = document.getElementById("marquee-track");
+  if (t && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) t.innerHTML += t.innerHTML;
+})();
+
+/* Custom cursor (desktop only, additive — never traps input) */
+(function customCursor() {
+  const fine = window.matchMedia("(pointer:fine)").matches;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dot = document.getElementById("cursor-dot");
+  const ring = document.getElementById("cursor-ring");
+  if (!fine || reduce || !dot || !ring) return;
+  document.body.classList.add("cursor-on");
+  let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+  addEventListener("pointermove", (e) => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx}px, ${my}px)`;
+  }, { passive: true });
+  (function loop() {
+    rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+    requestAnimationFrame(loop);
+  })();
+  const hot = "a,button,.node,.project,.filter,.contact-link,.copy-btn";
+  addEventListener("pointerover", (e) => { if (e.target.closest(hot)) ring.classList.add("hot"); });
+  addEventListener("pointerout", (e) => { if (e.target.closest(hot)) ring.classList.remove("hot"); });
+  addEventListener("pointerdown", () => ring.classList.add("down"));
+  addEventListener("pointerup", () => ring.classList.remove("down"));
+})();
+
+/* Magnetic primary buttons */
+(function magnetic() {
+  if (!window.matchMedia("(pointer:fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.querySelectorAll(".btn-resume, .copy-btn, .mobile-resume").forEach((el) => {
+    el.classList.add("magnetic");
+    el.addEventListener("pointermove", (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.3}px, ${(e.clientY - r.top - r.height / 2) * 0.3}px)`;
+    });
+    el.addEventListener("pointerleave", () => { el.style.transform = ""; });
+  });
+})();
+
 /* ---------- Scroll to top ---------- */
 const toTop = document.getElementById("to-top");
 window.addEventListener("scroll", () => {

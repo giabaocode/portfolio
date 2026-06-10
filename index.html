@@ -30,6 +30,11 @@
     <!-- Boot intro overlay -->
     <div class="boot" id="boot" aria-hidden="true"><pre class="boot-log" id="boot-log"></pre></div>
 
+    <!-- Custom cursor + film grain (desktop / JS only) -->
+    <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
     <!-- ===== HEADER ===== -->
     <header class="site-header" id="header">
       <nav class="nav">
@@ -75,7 +80,7 @@
       <section class="hero" id="top">
        <div class="hero-grid">
         <div class="hero-copy">
-        <p class="hero-tag">Backend Java · Business Analyst · Intern</p>
+        <p class="hero-tag"><span class="rotator" id="role-rotator">Backend Java Engineer</span></p>
         <h1>
           I turn messy business processes<br />
           into <span class="hl">reliable state machines.</span>
@@ -133,6 +138,13 @@
         </div>
       </section>
 
+      <!-- ====== TECH MARQUEE ====== -->
+      <section class="marquee" aria-label="Tech stack">
+        <div class="marquee-track" id="marquee-track">
+          <span>Java&nbsp;21</span><b>·</b><span>Spring&nbsp;Boot&nbsp;3</span><b>·</b><span>PostgreSQL</span><b>·</b><span>Redis</span><b>·</b><span>Docker</span><b>·</b><span>Node.js</span><b>·</b><span>Express</span><b>·</b><span>React</span><b>·</b><span>Next.js</span><b>·</b><span>TypeScript</span><b>·</b><span>Prisma</span><b>·</b><span>MongoDB</span><b>·</b><span>Resilience4j</span><b>·</b><span>K6</span><b>·</b><span>JWT</span><b>·</b><span>Gemini&nbsp;AI</span><b>·</b>
+        </div>
+      </section>
+
       <!-- ====== PROJECTS / WORKFLOWS ====== -->
       <section class="section" id="projects">
         <div class="section-header">
@@ -160,28 +172,29 @@
       <!-- ====== SKILLS / CAPABILITIES ====== -->
       <section class="section" id="skills">
         <h2>Capability registry</h2>
-        <div class="skills-grid">
-          <div class="skill-card">
+        <div class="bento">
+          <div class="skill-card feat bento-3">
             <h3><span class="sk-tick"></span>Backend</h3>
             <p>Spring Boot 3 · Java 21 · Node.js · Express · REST design · JWT · rate limiting · async events · Resilience4j</p>
+            <span class="bento-badge">primary focus</span>
           </div>
-          <div class="skill-card">
+          <div class="skill-card bento-3">
             <h3><span class="sk-tick"></span>Database &amp; concurrency</h3>
             <p>PostgreSQL · transactions · row-level &amp; optimistic locking · CTEs · full-text search · MongoDB · Redis</p>
           </div>
-          <div class="skill-card">
+          <div class="skill-card bento-2">
             <h3><span class="sk-tick"></span>Business analysis</h3>
             <p>Workflow decomposition · state-machine modeling · user stories · API contracts · role-based requirements · sprint planning</p>
           </div>
-          <div class="skill-card">
+          <div class="skill-card bento-2">
             <h3><span class="sk-tick"></span>Frontend</h3>
             <p>React 18–19 · Next.js App Router · Tailwind CSS · React Query · React Hook Form · Recharts</p>
           </div>
-          <div class="skill-card">
+          <div class="skill-card bento-2">
             <h3><span class="sk-tick"></span>AI integration</h3>
             <p>Gemini / Vertex AI · prompt engineering (~3k-word systems) · structured JSON output · PDF summarization</p>
           </div>
-          <div class="skill-card">
+          <div class="skill-card bento-6">
             <h3><span class="sk-tick"></span>Tooling &amp; ops</h3>
             <p>Git · Docker Compose · Postman · Jira · K6 load testing · PWA / Service Workers · Android Studio</p>
           </div>
