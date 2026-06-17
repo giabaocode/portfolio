@@ -1554,12 +1554,13 @@ body.cursor-on .project {
   display: inline-flex;
   align-items: center;
   gap: 26px;
+  width: max-content;
   white-space: nowrap;
-  animation: marquee 34s linear infinite;
+  animation: marquee 28s linear infinite;
   will-change: transform;
 }
 .marquee:hover .marquee-track {
-  animation-play-state: paused;
+  animation-play-state: running;
 }
 .marquee-track span {
   font-family: var(--mono);
@@ -1572,8 +1573,11 @@ body.cursor-on .project {
   font-weight: 700;
 }
 @keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
@@ -2700,4 +2704,11 @@ body::before {
 }
 .hero-copy {
   max-width: 860px;
+}
+
+.marquee-track {
+  animation: marquee 28s linear infinite !important;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: running !important;
 }

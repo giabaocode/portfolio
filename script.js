@@ -649,10 +649,10 @@ if (window.matchMedia("(pointer:fine)").matches) {
 /* Tech marquee - duplicate the track for a seamless loop */
 (function marquee() {
   const t = document.getElementById("marquee-track");
-  if (!t || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-    return;
+  if (!t || t.dataset.marqueeReady === "1") return;
   t.innerHTML += t.innerHTML;
   t.setAttribute("aria-live", "off");
+  t.dataset.marqueeReady = "1";
 })();
 
 /* Custom cursor (desktop only, additive - never traps input) */
