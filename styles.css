@@ -1246,15 +1246,42 @@ strong {
 
 /* ===== Scroll reveal ===== */
 .reveal {
+  --reveal-y: 20px;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translate3d(0, var(--reveal-y), 0);
   transition:
     opacity 0.5s ease,
     transform 0.5s ease;
 }
 .reveal.visible {
+  --reveal-y: 0px;
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, var(--reveal-y), 0);
+}
+
+.scroll-depth {
+  --reveal-y: 0px;
+  --depth-y: 0px;
+  --depth-z: 0px;
+  --depth-rx: 0deg;
+  --depth-ry: 0deg;
+  --depth-base-rx: 0deg;
+  --depth-base-ry: 0deg;
+  --depth-scale: 1;
+  --hover-y: 0px;
+  transform: perspective(1100px)
+    translate3d(
+      0,
+      calc(var(--reveal-y) + var(--depth-y) + var(--hover-y)),
+      var(--depth-z)
+    )
+    rotateX(var(--depth-base-rx)) rotateY(var(--depth-base-ry))
+    rotateX(var(--depth-rx)) rotateY(var(--depth-ry))
+    scale(var(--depth-scale));
+  transform-style: preserve-3d;
+}
+.scroll-depth.is-depth-active {
+  will-change: transform;
 }
 
 /* ===========================================
@@ -1268,11 +1295,12 @@ strong {
   top: 0;
   left: 0;
   height: 2px;
-  width: 0;
+  width: 100%;
   z-index: 60;
   background: var(--signal);
   box-shadow: 0 0 10px var(--signal-line);
-  transition: width 0.08s linear;
+  transform: scaleX(0);
+  transform-origin: left center;
 }
 
 /* Ambient aurora — static gradients (no blur filter, no animation = cheap) */
@@ -1817,13 +1845,12 @@ body::before {
 }
 .depth-light {
   position: absolute;
-  width: 36vw;
+  width: min(30vw, 420px);
   aspect-ratio: 1 / 1;
   border-radius: 50%;
-  filter: blur(48px);
-  opacity: 0.34;
+  filter: blur(28px);
+  opacity: 0.22;
   transform: translateZ(0);
-  mix-blend-mode: screen;
 }
 .depth-a {
   left: -10vw;
@@ -1842,8 +1869,7 @@ body::before {
   opacity: 0.2;
 }
 :root[data-theme="light"] .depth-light {
-  mix-blend-mode: multiply;
-  opacity: 0.16;
+  opacity: 0.1;
 }
 
 .site-header {
@@ -2052,7 +2078,10 @@ body::before {
 .hero-engine {
   min-height: 500px;
   border-radius: 30px;
-  transform: rotateX(5deg) rotateY(-9deg) translateZ(0);
+  --depth-base-rx: 5deg;
+  --depth-base-ry: -9deg;
+  transform: perspective(1400px) translateZ(0) rotateX(var(--depth-base-rx))
+    rotateY(var(--depth-base-ry));
   transform-style: preserve-3d;
   box-shadow:
     var(--shadow-3d),
@@ -2077,7 +2106,7 @@ body::before {
 }
 .hero-engine::before {
   width: 92%;
-  filter: blur(16px);
+  filter: blur(10px);
   background: radial-gradient(
     circle,
     color-mix(in srgb, var(--signal) 22%, transparent),
@@ -2106,8 +2135,8 @@ body::before {
   border: 1px solid color-mix(in srgb, var(--edge-light) 100%, transparent);
   border-radius: 14px;
   background: color-mix(in srgb, var(--bg-card) 68%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   box-shadow:
     inset 0 1px 0 var(--edge-light),
     0 18px 44px rgba(0, 0, 0, 0.22);
@@ -2226,8 +2255,8 @@ body::before {
   color: var(--text);
   border: 1px solid color-mix(in srgb, var(--edge-light) 100%, transparent);
   background: color-mix(in srgb, var(--bg-card) 70%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow:
     inset 0 1px 0 var(--edge-light),
     0 12px 34px rgba(0, 0, 0, 0.18);
@@ -2310,7 +2339,9 @@ body::before {
 .project {
   border-radius: 22px;
   transform-style: preserve-3d;
-  will-change: transform;
+  will-change: auto;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 560px;
   background: linear-gradient(
     145deg,
     color-mix(in srgb, var(--bg-card) 96%, transparent),
@@ -2342,7 +2373,7 @@ body::before {
   mask-composite: exclude;
 }
 .project:hover {
-  transform: translateY(-7px);
+  --hover-y: -5px;
   box-shadow:
     0 28px 90px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 var(--edge-light);
@@ -2383,8 +2414,8 @@ body::before {
 .flow-detail {
   border-radius: 16px;
   background: color-mix(in srgb, var(--bg-elev) 82%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 .project-actions a {
   position: relative;
@@ -2499,7 +2530,7 @@ body::before {
     box-shadow 0.2s ease;
 }
 .contact-link:hover {
-  transform: translateY(-4px);
+  --hover-y: -4px;
   box-shadow: 0 20px 54px rgba(0, 0, 0, 0.18);
 }
 .copy-btn {
@@ -2608,5 +2639,84 @@ body::before {
   .hero-engine,
   .project {
     transform: none !important;
+  }
+}
+
+/* Smooth scroll-depth layer: one transform path for reveal, hover and 3D scroll. */
+.hero-engine.scroll-depth,
+.project.scroll-depth,
+.bento .skill-card.scroll-depth,
+.tl-item.scroll-depth,
+.edu-card.scroll-depth,
+.contact-link.scroll-depth,
+.numbers.scroll-depth {
+  transform: perspective(1200px)
+    translate3d(
+      0,
+      calc(var(--reveal-y, 0px) + var(--depth-y, 0px) + var(--hover-y, 0px)),
+      var(--depth-z, 0px)
+    )
+    rotateX(var(--depth-base-rx, 0deg)) rotateY(var(--depth-base-ry, 0deg))
+    rotateX(var(--depth-rx, 0deg)) rotateY(var(--depth-ry, 0deg))
+    scale(var(--depth-scale, 1));
+}
+.js .hero-engine.scroll-depth {
+  --reveal-y: 16px;
+  opacity: 0;
+  animation: none;
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ready .hero-engine.scroll-depth {
+  --reveal-y: 0px;
+  opacity: 1;
+  animation: none;
+}
+.bento .skill-card.scroll-depth:hover {
+  --hover-y: -3px;
+  transform: perspective(1200px)
+    translate3d(
+      0,
+      calc(var(--reveal-y, 0px) + var(--depth-y, 0px) + var(--hover-y, 0px)),
+      var(--depth-z, 0px)
+    )
+    rotateX(var(--depth-base-rx, 0deg)) rotateY(var(--depth-base-ry, 0deg))
+    rotateX(var(--depth-rx, 0deg)) rotateY(var(--depth-ry, 0deg))
+    scale(var(--depth-scale, 1));
+}
+@media (max-width: 760px) {
+  .depth-lights,
+  .grain,
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+  .hero-engine.scroll-depth,
+  .project.scroll-depth,
+  .bento .skill-card.scroll-depth,
+  .tl-item.scroll-depth,
+  .edu-card.scroll-depth,
+  .contact-link.scroll-depth,
+  .numbers.scroll-depth {
+    --depth-y: 0px !important;
+    --depth-z: 0px !important;
+    --depth-rx: 0deg !important;
+    --depth-ry: 0deg !important;
+    --depth-scale: 1 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-depth,
+  .hero-engine.scroll-depth,
+  .project.scroll-depth,
+  .bento .skill-card.scroll-depth,
+  .tl-item.scroll-depth,
+  .edu-card.scroll-depth,
+  .contact-link.scroll-depth,
+  .numbers.scroll-depth {
+    transform: none !important;
+    will-change: auto !important;
   }
 }

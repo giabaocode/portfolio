@@ -605,7 +605,7 @@ copyBtn?.addEventListener("click", async () => {
 
   const packets = [];
   PATHS.forEach((p, i) => {
-    for (let j = 0; j < 2; j++)
+    for (let j = 0; j < 1; j++)
       packets.push({
         path: p,
         seg: 0,
@@ -666,7 +666,7 @@ copyBtn?.addEventListener("click", async () => {
     const r = canvas.getBoundingClientRect();
     W = r.width;
     H = r.height;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -783,7 +783,7 @@ copyBtn?.addEventListener("click", async () => {
     raf = requestAnimationFrame(frame);
     if (!last) last = now;
     const elapsed = (now - last) / 1000;
-    if (elapsed < 0.032) return; // cap at ~30fps — plenty for an ambient diagram
+    if (elapsed < 0.04) return; // cap at ~24fps, enough for an ambient diagram
     last = now;
     const dt = Math.min(elapsed, 0.05);
     t += dt;
@@ -866,10 +866,17 @@ copyBtn?.addEventListener("click", async () => {
 /* Scroll progress bar */
 const progressBar = document.getElementById("scroll-progress");
 if (progressBar) {
+  let progressQueued = false;
   const onScroll = () => {
-    const h = document.documentElement;
-    const max = h.scrollHeight - h.clientHeight;
-    progressBar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+    if (progressQueued) return;
+    progressQueued = true;
+    requestAnimationFrame(() => {
+      progressQueued = false;
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const progress = max > 0 ? h.scrollTop / max : 0;
+      progressBar.style.transform = `scaleX(${progress})`;
+    });
   };
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
@@ -879,7 +886,8 @@ if (progressBar) {
 if (window.matchMedia("(pointer:fine)").matches) {
   const grid = document.getElementById("project-grid");
   let pending = false,
-    lastEv = null;
+    lastEv = null,
+    lastCard = null;
   grid?.addEventListener(
     "pointermove",
     (e) => {
@@ -889,7 +897,12 @@ if (window.matchMedia("(pointer:fine)").matches) {
       requestAnimationFrame(() => {
         pending = false;
         const card = lastEv.target.closest && lastEv.target.closest(".project");
-        if (!card) return;
+        if (!card || card.hidden) return;
+        if (lastCard && lastCard !== card) {
+          lastCard.style.removeProperty("--mx");
+          lastCard.style.removeProperty("--my");
+        }
+        lastCard = card;
         const r = card.getBoundingClientRect();
         card.style.setProperty(
           "--mx",
@@ -903,6 +916,12 @@ if (window.matchMedia("(pointer:fine)").matches) {
     },
     { passive: true },
   );
+  grid?.addEventListener("pointerleave", () => {
+    if (!lastCard) return;
+    lastCard.style.removeProperty("--mx");
+    lastCard.style.removeProperty("--my");
+    lastCard = null;
+  });
 }
 
 /* Hero role rotator */
@@ -929,14 +948,14 @@ if (window.matchMedia("(pointer:fine)").matches) {
   }, 2600);
 })();
 
-/* Tech marquee — duplicate the track for a seamless loop */
+/* Tech marquee - duplicate the track for a seamless loop */
 (function marquee() {
   const t = document.getElementById("marquee-track");
   if (t && !window.matchMedia("(prefers-reduced-motion: reduce)").matches)
     t.innerHTML += t.innerHTML;
 })();
 
-/* Custom cursor (desktop only, additive — never traps input) */
+/* Custom cursor (desktop only, additive - never traps input) */
 (function customCursor() {
   const fine = window.matchMedia("(pointer:fine)").matches;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -946,23 +965,23 @@ if (window.matchMedia("(pointer:fine)").matches) {
   document.body.classList.add("cursor-on");
   let mx = innerWidth / 2,
     my = innerHeight / 2,
-    rx = mx,
-    ry = my;
+    queued = false;
+  const move = () => {
+    queued = false;
+    dot.style.transform = `translate(${mx}px, ${my}px)`;
+    ring.style.transform = `translate(${mx}px, ${my}px)`;
+  };
   addEventListener(
     "pointermove",
     (e) => {
       mx = e.clientX;
       my = e.clientY;
-      dot.style.transform = `translate(${mx}px, ${my}px)`;
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(move);
     },
     { passive: true },
   );
-  (function loop() {
-    rx += (mx - rx) * 0.18;
-    ry += (my - ry) * 0.18;
-    ring.style.transform = `translate(${rx}px, ${ry}px)`;
-    requestAnimationFrame(loop);
-  })();
   const hot = "a,button,.node,.project,.filter,.contact-link,.copy-btn";
   addEventListener("pointerover", (e) => {
     if (e.target.closest(hot)) ring.classList.add("hot");
@@ -1002,10 +1021,16 @@ if (window.matchMedia("(pointer:fine)").matches) {
 
 /* ---------- Scroll to top ---------- */
 const toTop = document.getElementById("to-top");
+let topQueued = false;
 window.addEventListener(
   "scroll",
   () => {
-    toTop?.classList.toggle("show", window.scrollY > 500);
+    if (topQueued) return;
+    topQueued = true;
+    requestAnimationFrame(() => {
+      topQueued = false;
+      toTop?.classList.toggle("show", window.scrollY > 500);
+    });
   },
   { passive: true },
 );
@@ -1014,7 +1039,7 @@ toTop?.addEventListener("click", () =>
 );
 
 /* =============================================================
-   CINEMATIC 3D UPGRADE — depth tilt, soft parallax, console status
+   CINEMATIC 3D UPGRADE - scroll depth, lightweight parallax, console status
    ============================================================= */
 (function premiumDepthLayer() {
   const fine = window.matchMedia("(pointer:fine)").matches;
@@ -1038,80 +1063,80 @@ toTop?.addEventListener("click", () =>
         consoleCode.style.opacity = "1";
         consoleCode.style.transform = "translateY(0)";
       }, 220);
-    }, 2300);
+    }, 2600);
   }
 
-  if (!fine || reduce) return;
+  if (reduce) return;
 
-  const depthLights = document.querySelector(".depth-lights");
-  let px = 0,
-    py = 0,
-    scheduled = false;
-  window.addEventListener(
-    "pointermove",
-    (e) => {
-      px = (e.clientX / innerWidth - 0.5) * 2;
-      py = (e.clientY / innerHeight - 0.5) * 2;
-      if (scheduled) return;
-      scheduled = true;
-      requestAnimationFrame(() => {
-        scheduled = false;
-        if (depthLights)
-          depthLights.style.transform = `translate(${px * 12}px, ${py * 10}px)`;
-      });
-    },
-    { passive: true },
-  );
+  const targets = [
+    ...document.querySelectorAll(
+      ".hero-engine, .numbers, .project, .bento .skill-card, .tl-item, .edu-card, .contact-link",
+    ),
+  ];
+  if (!targets.length) return;
 
-  const tiltTargets = document.querySelectorAll(
-    ".hero-engine, .project, .bento .skill-card, .contact-link",
-  );
-  tiltTargets.forEach((el) => {
-    let rect = null;
-    const isHero = el.classList.contains("hero-engine");
-    const max = isHero ? 7 : 4.2;
-
-    el.addEventListener("pointerenter", () => {
-      rect = el.getBoundingClientRect();
-    });
-    el.addEventListener(
-      "pointermove",
-      (e) => {
-        rect = rect || el.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        const rx = (-y * max).toFixed(2);
-        const ry = (x * max).toFixed(2);
-        if (isHero) {
-          el.style.transform = `perspective(1400px) rotateX(${(5 + Number(rx)).toFixed(2)}deg) rotateY(${(-9 + Number(ry)).toFixed(2)}deg) translateZ(0)`;
+  const active = new Set();
+  const strength = fine ? 1 : 0.45;
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          active.add(entry.target);
+          entry.target.classList.add("is-depth-active");
         } else {
-          el.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-5px)`;
+          active.delete(entry.target);
+          entry.target.classList.remove("is-depth-active");
         }
-      },
-      { passive: true },
-    );
-    el.addEventListener("pointerleave", () => {
-      rect = null;
-      el.style.transform = "";
-    });
+      });
+      scheduleDepth();
+    },
+    { rootMargin: "18% 0px 18% 0px", threshold: 0 },
+  );
+
+  targets.forEach((el, i) => {
+    el.classList.add("scroll-depth");
+    el.dataset.depthDir = i % 2 === 0 ? "1" : "-1";
+    el.dataset.depthLayer = el.classList.contains("hero-engine")
+      ? "1.35"
+      : el.classList.contains("project")
+        ? "1"
+        : "0.72";
+    io.observe(el);
   });
 
-  document.querySelectorAll(".primary-cta, .secondary-cta").forEach((el) => {
-    let rect = null;
-    el.addEventListener("pointerenter", () => {
-      rect = el.getBoundingClientRect();
+  let depthQueued = false;
+  function scheduleDepth() {
+    if (depthQueued) return;
+    depthQueued = true;
+    requestAnimationFrame(updateDepth);
+  }
+
+  function updateDepth() {
+    depthQueued = false;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    active.forEach((el) => {
+      if (el.hidden) return;
+      const rect = el.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      const raw = (center - vh / 2) / (vh / 2 + rect.height / 2);
+      const progress = Math.max(-1, Math.min(1, raw));
+      const layer = Number(el.dataset.depthLayer || 1);
+      const dir = Number(el.dataset.depthDir || 1);
+      const y = -progress * 24 * layer * strength;
+      const rx = progress * 5.2 * layer * strength;
+      const ry = dir * progress * 3.2 * layer * strength;
+      const z = (1 - Math.abs(progress)) * 18 * layer * strength;
+      const scale = 1 - Math.abs(progress) * 0.018 * strength;
+
+      el.style.setProperty("--depth-y", `${y.toFixed(2)}px`);
+      el.style.setProperty("--depth-rx", `${rx.toFixed(2)}deg`);
+      el.style.setProperty("--depth-ry", `${ry.toFixed(2)}deg`);
+      el.style.setProperty("--depth-z", `${z.toFixed(2)}px`);
+      el.style.setProperty("--depth-scale", scale.toFixed(4));
     });
-    el.addEventListener(
-      "pointermove",
-      (e) => {
-        const r = rect || (rect = el.getBoundingClientRect());
-        el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.16}px, ${(e.clientY - r.top - r.height / 2) * 0.16}px)`;
-      },
-      { passive: true },
-    );
-    el.addEventListener("pointerleave", () => {
-      rect = null;
-      el.style.transform = "";
-    });
-  });
+  }
+
+  window.addEventListener("scroll", scheduleDepth, { passive: true });
+  window.addEventListener("resize", scheduleDepth, { passive: true });
+  scheduleDepth();
 })();
