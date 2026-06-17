@@ -1321,6 +1321,10 @@ strong {
 .aurora span {
   display: none;
 }
+.depth-lights,
+.grain {
+  display: none;
+}
 
 /* Boot intro overlay (shown only when JS is on) */
 .boot {
@@ -1410,7 +1414,7 @@ strong {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: shimmer 6s linear infinite;
+  animation: none;
 }
 @keyframes shimmer {
   to {
@@ -1554,8 +1558,8 @@ body.cursor-on .project {
   align-items: center;
   gap: 26px;
   white-space: nowrap;
-  animation: marquee 34s linear infinite;
-  will-change: transform;
+  animation: none;
+  will-change: auto;
 }
 .marquee:hover .marquee-track {
   animation-play-state: paused;
@@ -2197,13 +2201,13 @@ body::before {
   border-color: color-mix(in srgb, var(--violet) 42%, transparent);
 }
 .ready .ring-a {
-  animation: orbit-spin-a 12s linear infinite;
+  animation: orbit-spin-a 42s linear infinite;
 }
 .ready .ring-b {
-  animation: orbit-spin-b 15s linear infinite reverse;
+  animation: orbit-spin-b 54s linear infinite reverse;
 }
 .ready .ring-c {
-  animation: orbit-spin-c 18s linear infinite;
+  animation: orbit-spin-c 68s linear infinite;
 }
 .orbit-core {
   width: 78px;
@@ -2283,7 +2287,7 @@ body::before {
   color: var(--violet);
 }
 .ready .floating-chip {
-  animation: chip-float 5.6s ease-in-out infinite;
+  animation: none;
 }
 .chip-spring {
   animation-delay: 0.8s !important;
@@ -2374,6 +2378,7 @@ body::before {
 }
 .project:hover {
   --hover-y: -5px;
+  transform: translateY(-3px);
   box-shadow:
     0 28px 90px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 var(--edge-light);
@@ -2531,6 +2536,7 @@ body::before {
 }
 .contact-link:hover {
   --hover-y: -4px;
+  transform: translateY(-3px);
   box-shadow: 0 20px 54px rgba(0, 0, 0, 0.18);
 }
 .copy-btn {
@@ -2642,14 +2648,8 @@ body::before {
   }
 }
 
-/* Smooth scroll-depth layer: one transform path for reveal, hover and 3D scroll. */
-.hero-engine.scroll-depth,
-.project.scroll-depth,
-.bento .skill-card.scroll-depth,
-.tl-item.scroll-depth,
-.edu-card.scroll-depth,
-.contact-link.scroll-depth,
-.numbers.scroll-depth {
+/* Smooth scroll-depth layer: keep 3D as a hero accent, not a page-wide effect. */
+.hero-engine.scroll-depth {
   transform: perspective(1200px)
     translate3d(
       0,
@@ -2673,18 +2673,6 @@ body::before {
   opacity: 1;
   animation: none;
 }
-.bento .skill-card.scroll-depth:hover {
-  --hover-y: -3px;
-  transform: perspective(1200px)
-    translate3d(
-      0,
-      calc(var(--reveal-y, 0px) + var(--depth-y, 0px) + var(--hover-y, 0px)),
-      var(--depth-z, 0px)
-    )
-    rotateX(var(--depth-base-rx, 0deg)) rotateY(var(--depth-base-ry, 0deg))
-    rotateX(var(--depth-rx, 0deg)) rotateY(var(--depth-ry, 0deg))
-    scale(var(--depth-scale, 1));
-}
 @media (max-width: 760px) {
   .depth-lights,
   .grain,
@@ -2692,13 +2680,7 @@ body::before {
   .cursor-ring {
     display: none !important;
   }
-  .hero-engine.scroll-depth,
-  .project.scroll-depth,
-  .bento .skill-card.scroll-depth,
-  .tl-item.scroll-depth,
-  .edu-card.scroll-depth,
-  .contact-link.scroll-depth,
-  .numbers.scroll-depth {
+  .hero-engine.scroll-depth {
     --depth-y: 0px !important;
     --depth-z: 0px !important;
     --depth-rx: 0deg !important;
@@ -2709,13 +2691,7 @@ body::before {
 
 @media (prefers-reduced-motion: reduce) {
   .scroll-depth,
-  .hero-engine.scroll-depth,
-  .project.scroll-depth,
-  .bento .skill-card.scroll-depth,
-  .tl-item.scroll-depth,
-  .edu-card.scroll-depth,
-  .contact-link.scroll-depth,
-  .numbers.scroll-depth {
+  .hero-engine.scroll-depth {
     transform: none !important;
     will-change: auto !important;
   }

@@ -824,45 +824,10 @@ copyBtn?.addEventListener("click", async () => {
 
 /* Boot intro + hero entrance */
 (function boot() {
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const bootEl = document.getElementById("boot");
-  const log = document.getElementById("boot-log");
-  const ready = () => document.body.classList.add("ready");
-  const finish = () => {
-    bootEl && bootEl.classList.add("done");
-    ready();
-  };
-
-  if (reduce || sessionStorage.getItem("booted") || !bootEl || !log) {
-    bootEl && bootEl.classList.add("done");
-    ready();
-    return;
-  }
-  sessionStorage.setItem("booted", "1");
-
-  const lines = [
-    { t: "$ ./giabao --boot", c: "cmd" },
-    { t: "[ ok ] loading workflows ............ 7", c: "" },
-    { t: "[ ok ] datastores ......... pg · mongo · redis", c: "" },
-    { t: "[ ok ] state machines online", c: "" },
-    { t: "> ready. welcome.", c: "ok" },
-  ];
-  let i = 0;
-  (function typeLine() {
-    if (i >= lines.length) {
-      setTimeout(finish, 520);
-      return;
-    }
-    const ln = lines[i++];
-    const span = document.createElement("span");
-    if (ln.c) span.className = ln.c;
-    span.textContent = ln.t + "\n";
-    log.appendChild(span);
-    setTimeout(typeLine, 230);
-  })();
-  setTimeout(finish, 2800); // safety: never trap the visitor
+  bootEl && bootEl.classList.add("done");
+  document.body.classList.add("ready");
 })();
-
 /* Scroll progress bar */
 const progressBar = document.getElementById("scroll-progress");
 if (progressBar) {
@@ -951,8 +916,9 @@ if (window.matchMedia("(pointer:fine)").matches) {
 /* Tech marquee - duplicate the track for a seamless loop */
 (function marquee() {
   const t = document.getElementById("marquee-track");
-  if (t && !window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-    t.innerHTML += t.innerHTML;
+  if (!t || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    return;
+  t.setAttribute("aria-live", "off");
 })();
 
 /* Custom cursor (desktop only, additive - never traps input) */
@@ -961,7 +927,8 @@ if (window.matchMedia("(pointer:fine)").matches) {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const dot = document.getElementById("cursor-dot");
   const ring = document.getElementById("cursor-ring");
-  if (!fine || reduce || !dot || !ring) return;
+  const enableCustomCursor = false;
+  if (!enableCustomCursor || !fine || reduce || !dot || !ring) return;
   document.body.classList.add("cursor-on");
   let mx = innerWidth / 2,
     my = innerHeight / 2,
@@ -1068,41 +1035,12 @@ toTop?.addEventListener("click", () =>
 
   if (reduce) return;
 
-  const targets = [
-    ...document.querySelectorAll(
-      ".hero-engine, .numbers, .project, .bento .skill-card, .tl-item, .edu-card, .contact-link",
-    ),
-  ];
-  if (!targets.length) return;
+  const hero = document.querySelector(".hero-engine");
+  if (!hero) return;
+  hero.classList.add("scroll-depth");
+  hero.classList.add("is-depth-active");
 
-  const active = new Set();
   const strength = fine ? 1 : 0.45;
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          active.add(entry.target);
-          entry.target.classList.add("is-depth-active");
-        } else {
-          active.delete(entry.target);
-          entry.target.classList.remove("is-depth-active");
-        }
-      });
-      scheduleDepth();
-    },
-    { rootMargin: "18% 0px 18% 0px", threshold: 0 },
-  );
-
-  targets.forEach((el, i) => {
-    el.classList.add("scroll-depth");
-    el.dataset.depthDir = i % 2 === 0 ? "1" : "-1";
-    el.dataset.depthLayer = el.classList.contains("hero-engine")
-      ? "1.35"
-      : el.classList.contains("project")
-        ? "1"
-        : "0.72";
-    io.observe(el);
-  });
 
   let depthQueued = false;
   function scheduleDepth() {
@@ -1114,26 +1052,20 @@ toTop?.addEventListener("click", () =>
   function updateDepth() {
     depthQueued = false;
     const vh = window.innerHeight || document.documentElement.clientHeight;
-    active.forEach((el) => {
-      if (el.hidden) return;
-      const rect = el.getBoundingClientRect();
-      const center = rect.top + rect.height / 2;
-      const raw = (center - vh / 2) / (vh / 2 + rect.height / 2);
-      const progress = Math.max(-1, Math.min(1, raw));
-      const layer = Number(el.dataset.depthLayer || 1);
-      const dir = Number(el.dataset.depthDir || 1);
-      const y = -progress * 24 * layer * strength;
-      const rx = progress * 5.2 * layer * strength;
-      const ry = dir * progress * 3.2 * layer * strength;
-      const z = (1 - Math.abs(progress)) * 18 * layer * strength;
-      const scale = 1 - Math.abs(progress) * 0.018 * strength;
+    const rect = hero.getBoundingClientRect();
+    const center = rect.top + rect.height / 2;
+    const raw = (center - vh / 2) / (vh / 2 + rect.height / 2);
+    const progress = Math.max(-1, Math.min(1, raw));
+    const y = -progress * 10 * strength;
+    const rx = progress * 1.6 * strength;
+    const ry = -progress * 1.1 * strength;
+    const z = (1 - Math.abs(progress)) * 8 * strength;
 
-      el.style.setProperty("--depth-y", `${y.toFixed(2)}px`);
-      el.style.setProperty("--depth-rx", `${rx.toFixed(2)}deg`);
-      el.style.setProperty("--depth-ry", `${ry.toFixed(2)}deg`);
-      el.style.setProperty("--depth-z", `${z.toFixed(2)}px`);
-      el.style.setProperty("--depth-scale", scale.toFixed(4));
-    });
+    hero.style.setProperty("--depth-y", `${y.toFixed(2)}px`);
+    hero.style.setProperty("--depth-rx", `${rx.toFixed(2)}deg`);
+    hero.style.setProperty("--depth-ry", `${ry.toFixed(2)}deg`);
+    hero.style.setProperty("--depth-z", `${z.toFixed(2)}px`);
+    hero.style.setProperty("--depth-scale", "1");
   }
 
   window.addEventListener("scroll", scheduleDepth, { passive: true });
