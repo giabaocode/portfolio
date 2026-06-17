@@ -452,10 +452,7 @@ strong {
 
 /* Hero two-column grid (copy + live engine) */
 .hero-grid {
-  display: grid;
-  grid-template-columns: 1.12fr 0.88fr;
-  gap: 48px;
-  align-items: center;
+  display: block;
 }
 
 /* Live "running system" canvas */
@@ -1558,8 +1555,8 @@ body.cursor-on .project {
   align-items: center;
   gap: 26px;
   white-space: nowrap;
-  animation: none;
-  will-change: auto;
+  animation: marquee 34s linear infinite;
+  will-change: transform;
 }
 .marquee:hover .marquee-track {
   animation-play-state: paused;
@@ -1964,6 +1961,7 @@ body::before {
 .hero-copy {
   position: relative;
   z-index: 2;
+  max-width: 860px;
 }
 .hero-tag {
   display: inline-flex;
@@ -2695,4 +2693,11 @@ body::before {
     transform: none !important;
     will-change: auto !important;
   }
+}
+
+.hero-grid {
+  display: block;
+}
+.hero-copy {
+  max-width: 860px;
 }
